@@ -1,164 +1,239 @@
-
-<!DOCTYPE html>
-<html lang="fr">
+<!DOCTYPE html><html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Orange Office</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto', sans-serif;
-      background: url('https://img.freepik.com/free-vector/abstract-orange-background_23-2149023650.jpg') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 2rem;
-      border-radius: 12px;
-      margin-top: 3rem;
-    }
-    h1 {
-      text-align: center;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      margin-top: 1rem;
-    }
-    input {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      border: none;
-      border-radius: 6px;
-    }
-    button {
-      width: 100%;
-      padding: 0.8rem;
-      margin-top: 1.5rem;
-      background-color: #F56F00;
-      border: none;
-      color: white;
-      font-weight: bold;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .menu {
-      margin-top: 2rem;
-    }
-    .menu-item {
-      background: #F56F00;
-      border-radius: 8px;
-      padding: 0.8rem;
-      display: flex;
-      align-items: center;
-      margin-bottom: 1rem;
-      cursor: pointer;
-    }
-    .menu-item img {
-      width: 24px;
-      height: 24px;
-      margin-right: 0.8rem;
-    }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SSO Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+    * { box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 0; user-select: none; }
+    header { background: #f56f00; color: white; padding: 1rem; text-align: center; }
+    .container { padding: 1rem; max-width: 600px; margin: auto; }
+    .card { background: white; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    input, button { width: 100%; padding: 0.5rem; margin: 0.3rem 0; border: 1px solid #f56f00; border-radius: 4px; }
+    button { background: #f56f00; color: white; border: none; cursor: pointer; }
+    .progress { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: auto; margin-bottom: 1rem; font-weight: bold; }
+    canvas { height: 200px !important; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #ccc; padding: 6px; text-align: left; }
+    th { background-color: #f8f8f8; }
+    .flex-between { display: flex; justify-content: space-between; align-items: center; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Tableau de bord</h1>
+  </header>
   <div class="container">
-    <h1>Connexion</h1>
-    <label for="phone">Numéro de téléphone</label>
-    <input type="text" id="phone" placeholder="Ex: 896661666" />
-    <label for="password">Mot de passe</label>
-    <input type="password" id="password" placeholder="Votre mot de passe" />
-    <button onclick="login()">Se connecter</button>
-
-    <div class="menu">
-      <div class="menu-item" onclick="alert('Créations')">
-        <img src="https://img.icons8.com/ios-filled/50/create-new.png" alt="Créer" />
-        Créations
-      </div>
-      <div class="menu-item" onclick="alert('Configurations')">
-        <img src="https://img.icons8.com/ios-filled/50/settings.png" alt="Configurer" />
-        Configurations
-      </div>
-      <div class="menu-item" onclick="alert('Réinitialisations')">
-        <img src="https://img.icons8.com/ios-filled/50/recurring-appointment.png" alt="Réinitialiser" />
-        Réinitialisations
-      </div>
-      <div class="menu-item" onclick="alert('Liste de demande')">
-        <img src="https://img.icons8.com/ios-filled/50/todo-list.png" alt="Liste" />
-        Liste de demande
-      </div>
-      <div class="menu-item" onclick="alert('Demandes')">
-        <img src="https://img.icons8.com/ios-filled/50/help.png" alt="Demandes" />
-        Demandes
-      </div>
-    </div>
+    <div class="card">
+      <h3>Ajouter/Modifier un SSO</h3>
+      <input type="text" id="nom" placeholder="Nom">
+      <input type="tel" id="numero" placeholder="Numéro / Web">
+      <input type="number" id="sim" placeholder="SIM validées">
+      <input type="number" id="fcall" placeholder="FCall">
+      <button onclick="addSSO()">Valider</button>
+    </div><div class="card">
+  <div class="flex-between">
+    <h3>Progression</h3>
+    <div id="statsBox" style="text-align:right; font-size: 0.9rem;"></div>
   </div>
+  <div id="progressCircle" class="progress">
+    <div id="progressText">0%</div>
+  </div>
+  <div id="totalFCall" style="text-align:center; font-weight:bold;">Total FCall: 0</div>
+</div>
 
+<div class="card">
+  <h3><span style="color: #f56f00">Top 5 Meilleurs Activateurs</span></h3>
+  <table id="topList">
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Réalisé</th>
+        <th>%</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>Performances en temps réel</h3>
+  <canvas id="barChart"></canvas>
+</div>
+
+<div class="card">
+  <h3>Liste des Activateurs</h3>
+  <input type="text" oninput="filterList(this.value)" placeholder="Recherche...">
+  <div id="ssoList"></div>
+</div>
+
+  </div> 
+  
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+    import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";const firebaseConfig = {
+  apiKey: "AIzaSyDaNZlFOswD4215gN27T6aVw5qG1NLlXtc",
+  authDomain: "base-orange-office.firebaseapp.com",
+  projectId: "base-orange-office",
+  storageBucket: "base-orange-office.appspot.com",
+  messagingSenderId: "1028482640782",
+  appId: "1:1028482640782:web:23956a0436f43302d412df",
+  measurementId: "G-1B38J62MQC"
+};
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDaNZlFOswD4215gN27T6aVw5qG1NLlXtc",
-      authDomain: "base-orange-office.firebaseapp.com",
-      projectId: "base-orange-office",
-      storageBucket: "base-orange-office.appspot.com",
-      messagingSenderId: "1028482640782",
-      appId: "1:1028482640782:web:23956a0436f43302d412df",
-      measurementId: "G-1B38J62MQC"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+let currentUpdateId = null;
 
-    window.login = () => {
-      const phone = document.getElementById("phone").value;
-      const password = document.getElementById("password").value;
-      if (!phone || !password) {
-        alert("Veuillez remplir tous les champs.");
-        return;
+async function loadSSO() {
+  try {
+    const querySnapshot = await getDocs(collection(db, "SSO"));
+    const list = document.getElementById("ssoList");
+    list.innerHTML = "";
+    let totalFCall = 0;
+    let actifs = 0;
+    let inactifs = 0;
+    let dataTop = [];
+
+    querySnapshot.forEach((docSnap) => {
+      const data = docSnap.data();
+      totalFCall += parseInt(data.fcall);
+      if (data.sim > 0) actifs++; else inactifs++;
+      dataTop.push({ ...data, id: docSnap.id });
+
+      const item = document.createElement("div");
+      item.className = "card";
+      item.innerHTML = `
+        <strong>${data.nom}</strong><br>
+        Web : ${data.numero}<br>
+        SIM activées : ${data.sim}<br>
+        FCall : ${data.fcall}<br>
+        <button onclick="editSSO('${docSnap.id}', '${data.nom}', '${data.numero}', ${data.sim}, ${data.fcall})">Modifier</button>
+        <button onclick="deleteSSO('${docSnap.id}')">Supprimer</button>
+      `;
+      list.appendChild(item);
+    });
+
+    document.getElementById("totalFCall").innerText = `Total FCall: ${totalFCall}`;
+
+    const percent = Math.round((totalFCall / 500) * 100);
+    let color = "gray";
+    if (percent <= 25) color = "red";
+    else if (percent <= 50) color = "orange";
+    else if (percent <= 75) color = "yellow";
+    else if (percent <= 100) color = "green";
+    else color = "blue";
+
+    document.getElementById("progressCircle").style.background = `conic-gradient(${color} ${Math.min(percent, 100)}%, #dfe6e9 ${Math.min(percent, 100)}%)`;
+    document.getElementById("progressText").innerText = `${percent}%`;
+
+    document.getElementById("statsBox").innerHTML = `
+      Actifs : ${actifs} 🟧<br>
+      Inactifs : ${inactifs} 🟥<br>
+      Total : ${actifs + inactifs} 🟦
+    `;
+
+    // Top 5 tableau
+    dataTop.sort((a, b) => b.fcall - a.fcall);
+    const topList = document.querySelector("#topList tbody");
+    topList.innerHTML = "";
+    dataTop.slice(0, 5).forEach(sso => {
+      const tr = document.createElement("tr");
+      const pourcentage = ((sso.fcall / 150) * 100).toFixed(1);
+      tr.innerHTML = `
+        <td>${sso.nom}</td>
+        <td>${sso.fcall}</td>
+        <td>${pourcentage}%</td>
+      `;
+      topList.appendChild(tr);
+    });
+
+    // Graphique empilé
+    const ctx = document.getElementById('barChart').getContext('2d');
+    if (window.barChartInstance) window.barChartInstance.destroy();
+    window.barChartInstance = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['J-6', 'J-5', 'J-4', 'J-3', 'J-2', 'Hier', 'Aujourd\'hui'],
+        datasets: [
+          {
+            label: 'FCall ce mois',
+            data: [40, 50, 35, 60, 55, 70, 80],
+            backgroundColor: 'blue',
+            stack: 'Stack 0'
+          },
+          {
+            label: 'FCall mois passé',
+            data: [30, 45, 40, 55, 45, 60, 65],
+            backgroundColor: '#b2bec3',
+            stack: 'Stack 0'
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          x: { stacked: true },
+          y: { stacked: true }
+        }
       }
-      alert("Connexion simulée pour " + phone);
-    }
+    });
+  } catch (e) {
+    console.error("Erreur lors du chargement Firestore:", e);
+  }
+}
+
+window.addSSO = async () => {
+  const nom = document.getElementById("nom").value;
+  const numero = document.getElementById("numero").value;
+  const sim = parseInt(document.getElementById("sim").value);
+  const fcall = parseInt(document.getElementById("fcall").value);
+  if (currentUpdateId) {
+    const ssoRef = doc(db, "SSO", currentUpdateId);
+    await updateDoc(ssoRef, { nom, numero, sim, fcall });
+    currentUpdateId = null;
+  } else {
+    await addDoc(collection(db, "SSO"), { nom, numero, sim, fcall });
+  }
+  clearForm();
+  loadSSO();
+};
+
+window.editSSO = (id, nom, numero, sim, fcall) => {
+  document.getElementById("nom").value = nom;
+  document.getElementById("numero").value = numero;
+  document.getElementById("sim").value = sim;
+  document.getElementById("fcall").value = fcall;
+  currentUpdateId = id;
+};
+
+window.deleteSSO = async (id) => {
+  await deleteDoc(doc(db, "SSO", id));
+  loadSSO();
+};
+
+function clearForm() {
+  document.getElementById("nom").value = "";
+  document.getElementById("numero").value = "";
+  document.getElementById("sim").value = "";
+  document.getElementById("fcall").value = "";
+}
+
+document.addEventListener("DOMContentLoaded", loadSSO);
+
   </script>
 
-<script type="module">
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyDaNZlFOswD4215gN27T6aVw5qG1NLlXtc",
-    authDomain: "base-orange-office.firebaseapp.com",
-    projectId: "base-orange-office",
-    storageBucket: "base-orange-office.firebasestorage.app",
-    messagingSenderId: "1028482640782",
-    appId: "1:1028482640782:web:23956a0436f43302d412df",
-    measurementId: "G-1B38J62MQC"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      const userDoc = await getDoc(doc(db, "users", user.uid));
-      if (userDoc.exists()) {
-        const data = userDoc.data();
-        document.getElementById("userName").textContent = data.nom?.toUpperCase() || "UTILISATEUR";
-        document.getElementById("userPhone").textContent = data.numero || "";
-      }
+ <script>
+    function filterList(value) {
+      const cards = document.querySelectorAll('#ssoList .card');
+      cards.forEach(card => {
+        card.style.display = card.innerText.toLowerCase().includes(value.toLowerCase()) ? '' : 'none';
+      });
     }
-  });
-</script>
-
+  </script>
 </body>
 </html>
