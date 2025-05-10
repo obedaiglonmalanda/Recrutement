@@ -1,0 +1,164 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orange Office</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: url('https://img.freepik.com/free-vector/abstract-orange-background_23-2149023650.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-top: 3rem;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: none;
+      border-radius: 6px;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      margin-top: 1.5rem;
+      background-color: #F56F00;
+      border: none;
+      color: white;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .menu {
+      margin-top: 2rem;
+    }
+    .menu-item {
+      background: #F56F00;
+      border-radius: 8px;
+      padding: 0.8rem;
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+    .menu-item img {
+      width: 24px;
+      height: 24px;
+      margin-right: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Connexion</h1>
+    <label for="phone">Numéro de téléphone</label>
+    <input type="text" id="phone" placeholder="Ex: 896661666" />
+    <label for="password">Mot de passe</label>
+    <input type="password" id="password" placeholder="Votre mot de passe" />
+    <button onclick="login()">Se connecter</button>
+
+    <div class="menu">
+      <div class="menu-item" onclick="alert('Créations')">
+        <img src="https://img.icons8.com/ios-filled/50/create-new.png" alt="Créer" />
+        Créations
+      </div>
+      <div class="menu-item" onclick="alert('Configurations')">
+        <img src="https://img.icons8.com/ios-filled/50/settings.png" alt="Configurer" />
+        Configurations
+      </div>
+      <div class="menu-item" onclick="alert('Réinitialisations')">
+        <img src="https://img.icons8.com/ios-filled/50/recurring-appointment.png" alt="Réinitialiser" />
+        Réinitialisations
+      </div>
+      <div class="menu-item" onclick="alert('Liste de demande')">
+        <img src="https://img.icons8.com/ios-filled/50/todo-list.png" alt="Liste" />
+        Liste de demande
+      </div>
+      <div class="menu-item" onclick="alert('Demandes')">
+        <img src="https://img.icons8.com/ios-filled/50/help.png" alt="Demandes" />
+        Demandes
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDaNZlFOswD4215gN27T6aVw5qG1NLlXtc",
+      authDomain: "base-orange-office.firebaseapp.com",
+      projectId: "base-orange-office",
+      storageBucket: "base-orange-office.appspot.com",
+      messagingSenderId: "1028482640782",
+      appId: "1:1028482640782:web:23956a0436f43302d412df",
+      measurementId: "G-1B38J62MQC"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    window.login = () => {
+      const phone = document.getElementById("phone").value;
+      const password = document.getElementById("password").value;
+      if (!phone || !password) {
+        alert("Veuillez remplir tous les champs.");
+        return;
+      }
+      alert("Connexion simulée pour " + phone);
+    }
+  </script>
+
+<script type="module">
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDaNZlFOswD4215gN27T6aVw5qG1NLlXtc",
+    authDomain: "base-orange-office.firebaseapp.com",
+    projectId: "base-orange-office",
+    storageBucket: "base-orange-office.firebasestorage.app",
+    messagingSenderId: "1028482640782",
+    appId: "1:1028482640782:web:23956a0436f43302d412df",
+    measurementId: "G-1B38J62MQC"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        document.getElementById("userName").textContent = data.nom?.toUpperCase() || "UTILISATEUR";
+        document.getElementById("userPhone").textContent = data.numero || "";
+      }
+    }
+  });
+</script>
+
+</body>
+</html>
